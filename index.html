@@ -1,0 +1,993 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Byte · Data Representation</title>
+<meta name="description" content="Learn IB Computer Science Topic 1 (Data Representation) with Byte, one bite-sized lesson at a time.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Crect x='10' y='14' width='100' height='84' rx='22' fill='%230f5468'/%3E%3Crect x='22' y='26' width='76' height='58' rx='12' fill='%23b9f0e6'/%3E%3Crect x='40' y='42' width='11' height='16' rx='5' fill='%230b2f3b'/%3E%3Crect x='69' y='42' width='11' height='16' rx='5' fill='%230b2f3b'/%3E%3Cpath d='M48 68 q12 10 24 0' stroke='%230b2f3b' stroke-width='5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800;900&family=JetBrains+Mono:wght@600;700&display=swap">
+<style>
+/* Layout: one narrow column — lesson path on the home screen, full-screen lesson with a bottom feedback sheet */
+:root {
+  --brand: #0f5468;        /* Byte's dark blue-teal */
+  --brand-hi: #157591;
+  --brand-shadow: #093847;
+  --brand-soft: #dcefF2;
+  --bg: #f2f7f8;
+  --surface: #ffffff;
+  --line: #d6e3e6;
+  --line-strong: #bcd0d5;
+  --ink: #0f2a33;
+  --muted: #5a7480;
+  --screen: #b9f0e6;       /* Byte's screen */
+  --byte-ink: #0b2f3b;
+  --cheek: #ff9bb0;
+  --good: #2c9f4b;
+  --good-soft: #ddf4e2;
+  --good-shadow: #217a39;
+  --bad: #db4249;
+  --bad-soft: #fde3e3;
+  --bad-shadow: #ab3036;
+  --gold: #f2ab1c;
+  --gold-soft: #fff1cf;
+  --flame: #ff7b3a;
+  --heart: #ef4f5f;
+  --locked: #c9d6da;
+  --locked-shadow: #aabcc2;
+  --f-display: "Fredoka", "Nunito", system-ui, sans-serif;
+  --f-body: "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --brand: #1a7a95; --brand-hi: #2290af; --brand-shadow: #0d4a5c; --brand-soft: #143844;
+    --bg: #0b1a20; --surface: #12262e; --line: #1f3a44; --line-strong: #2b4c57;
+    --ink: #e2f0f3; --muted: #8aa7b1; --screen: #9fe6da; --byte-ink: #0b2f3b;
+    --good: #43c066; --good-soft: #15361f; --good-shadow: #2a8a46;
+    --bad: #f0646a; --bad-soft: #3a1b1d; --bad-shadow: #b84449;
+    --gold-soft: #3a2f12; --locked: #2a3f47; --locked-shadow: #1c2f36;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --brand: #1a7a95; --brand-hi: #2290af; --brand-shadow: #0d4a5c; --brand-soft: #143844;
+  --bg: #0b1a20; --surface: #12262e; --line: #1f3a44; --line-strong: #2b4c57;
+  --ink: #e2f0f3; --muted: #8aa7b1; --screen: #9fe6da; --byte-ink: #0b2f3b;
+  --good: #43c066; --good-soft: #15361f; --good-shadow: #2a8a46;
+  --bad: #f0646a; --bad-soft: #3a1b1d; --bad-shadow: #b84449;
+  --gold-soft: #3a2f12; --locked: #2a3f47; --locked-shadow: #1c2f36;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font-family: var(--f-body); font-weight: 700; font-size: 16px; line-height: 1.45;
+  padding-top: env(safe-area-inset-top, 0px);
+}
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--brand-hi); outline-offset: 2px; }
+.col { max-width: 600px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+[hidden] { display: none !important; }
+
+/* ---------- Chunky buttons ---------- */
+.btn {
+  border: none; border-radius: 16px; padding: 14px 22px; cursor: pointer;
+  font-family: var(--f-body); font-weight: 900; font-size: 1rem; letter-spacing: .06em; text-transform: uppercase;
+  background: var(--brand); color: #fff; box-shadow: 0 4px 0 var(--brand-shadow);
+  transition: transform .06s, box-shadow .06s, background .15s;
+}
+.btn:hover { background: var(--brand-hi); }
+.btn:active { transform: translateY(4px); box-shadow: 0 0 0 var(--brand-shadow); }
+.btn:disabled { background: var(--locked); color: var(--muted); box-shadow: 0 4px 0 var(--locked-shadow); cursor: not-allowed; transform: none; }
+.btn.good { background: var(--good); box-shadow: 0 4px 0 var(--good-shadow); }
+.btn.bad { background: var(--bad); box-shadow: 0 4px 0 var(--bad-shadow); }
+.btn.ghost { background: transparent; color: var(--muted); box-shadow: none; border: 2px solid var(--line); }
+.btn.ghost:hover { background: var(--surface); }
+.btn.wide { width: 100%; }
+
+/* ---------- Byte ---------- */
+.byte { display: block; overflow: visible; }
+.byte .b-body { fill: var(--brand); }
+.byte .b-dark { fill: var(--brand-shadow); }
+.byte .b-screen { fill: var(--screen); }
+.byte .b-ink { fill: var(--byte-ink); }
+.byte .b-stroke { stroke: var(--byte-ink); fill: none; stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+.byte .b-cheek { fill: var(--cheek); opacity: .7; }
+.byte .b-bulb { fill: var(--gold); }
+.byte .b-led { fill: #5ef0a0; }
+.byte .b-bob { animation: bob 3.2s ease-in-out infinite; transform-origin: 60px 110px; }
+.byte .b-eyes { animation: blink 4.5s infinite; transform-origin: 60px 50px; }
+.byte.happy .b-bob { animation: hop .55s ease-out 2; }
+.byte.sad .b-bob { animation: shake .45s ease-in-out 1; }
+.byte .b-bulb { animation: glow 2.4s ease-in-out infinite; }
+@keyframes bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+@keyframes blink { 0%,92%,100% { transform: scaleY(1); } 95% { transform: scaleY(.1); } }
+@keyframes hop { 0%,100% { transform: translateY(0); } 40% { transform: translateY(-12px) rotate(-3deg); } }
+@keyframes shake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-5px) rotate(-3deg); } 75% { transform: translateX(5px) rotate(3deg); } }
+@keyframes glow { 0%,100% { opacity: 1; } 50% { opacity: .55; } }
+
+/* ---------- Home ---------- */
+.topbar {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg);
+  border-bottom: 2px solid var(--line);
+}
+.topbar .col { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-block: 10px; }
+.logo { display: flex; align-items: center; gap: 8px; font-family: var(--f-display); font-weight: 700; font-size: 1.5rem; color: var(--brand); }
+:root[data-theme="dark"] .logo, .dark-logo { color: var(--ink); }
+.logo svg { width: 38px; height: 38px; }
+.stats { display: flex; gap: 14px; align-items: center; }
+.stat { display: flex; align-items: center; gap: 5px; font-weight: 900; font-variant-numeric: tabular-nums; }
+.stat svg { width: 24px; height: 24px; }
+.stat.flame { color: var(--flame); }
+.stat.flame.off { color: var(--muted); }
+.stat.gem { color: var(--gold); }
+.icon-btn { background: none; border: 2px solid var(--line); border-radius: 12px; width: 40px; height: 40px; display: grid; place-items: center; cursor: pointer; color: var(--muted); }
+.icon-btn svg { width: 22px; height: 22px; }
+
+.home { padding-block: 20px 60px; display: grid; gap: 22px; }
+.hello { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 14px; align-items: center; }
+.hello .byte { width: 96px; }
+.bubble {
+  position: relative; background: var(--surface); border: 2px solid var(--line); border-radius: 16px; padding: 12px 16px;
+  font-weight: 700; min-width: 0;
+}
+.bubble::before {
+  content: ""; position: absolute; left: -10px; top: 50%; width: 16px; height: 16px; margin-top: -8px;
+  background: var(--surface); border-left: 2px solid var(--line); border-bottom: 2px solid var(--line); transform: rotate(45deg);
+}
+.bubble h1 { font-family: var(--f-display); font-size: 1.35rem; margin: 0 0 2px; font-weight: 600; text-wrap: balance; }
+.bubble p { margin: 0; color: var(--muted); font-weight: 600; }
+
+.goal { background: var(--surface); border: 2px solid var(--line); border-radius: 16px; padding: 14px 16px; display: grid; gap: 8px; }
+.goal-top { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.goal-top b { font-family: var(--f-display); font-weight: 600; font-size: 1.05rem; }
+.goal-top span { color: var(--muted); font-variant-numeric: tabular-nums; }
+.bar { height: 16px; border-radius: 99px; background: var(--line); overflow: hidden; }
+.bar > i { display: block; height: 100%; border-radius: 99px; background: var(--gold); width: 0; transition: width .5s cubic-bezier(.3,1.4,.6,1); position: relative; }
+.bar > i::after { content: ""; position: absolute; left: 8px; right: 8px; top: 3px; height: 4px; border-radius: 99px; background: rgba(255,255,255,.35); }
+
+.unit { display: grid; gap: 18px; }
+.unit-banner {
+  background: var(--brand); color: #fff; border-radius: 16px; padding: 16px 18px;
+  box-shadow: 0 4px 0 var(--brand-shadow); display: flex; justify-content: space-between; gap: 12px; align-items: center;
+}
+.unit-banner .k { font-size: .78rem; letter-spacing: .12em; text-transform: uppercase; opacity: .8; font-weight: 800; }
+.unit-banner h2 { font-family: var(--f-display); font-size: 1.35rem; margin: 2px 0 0; font-weight: 600; }
+.unit-banner .count { font-family: var(--f-mono); font-size: .85rem; background: rgba(255,255,255,.15); border-radius: 10px; padding: 4px 9px; white-space: nowrap; }
+
+.path { display: grid; justify-items: center; gap: 16px; padding-block: 6px 10px; }
+.node-wrap { position: relative; display: grid; justify-items: center; }
+.node {
+  width: 76px; height: 70px; border-radius: 50%; border: none; cursor: pointer;
+  background: var(--brand); box-shadow: 0 7px 0 var(--brand-shadow); display: grid; place-items: center; color: #fff;
+  transition: transform .06s, box-shadow .06s;
+}
+.node:active { transform: translateY(7px); box-shadow: 0 0 0 var(--brand-shadow); }
+.node svg { width: 34px; height: 34px; }
+.node.done { background: var(--gold); box-shadow: 0 7px 0 #c4850c; }
+.node.locked { background: var(--locked); box-shadow: 0 7px 0 var(--locked-shadow); color: var(--muted); cursor: not-allowed; }
+.node.current { outline: 6px solid var(--brand-soft); outline-offset: 4px; }
+.node-label { margin-top: 12px; font-size: .85rem; color: var(--muted); text-align: center; max-width: 160px; }
+.start-tag {
+  position: absolute; top: -40px; background: var(--surface); border: 2px solid var(--line); color: var(--brand);
+  font-weight: 900; letter-spacing: .08em; font-size: .8rem; padding: 6px 12px; border-radius: 12px; white-space: nowrap;
+  animation: float 1.6s ease-in-out infinite;
+}
+:root[data-theme="dark"] .start-tag { color: var(--ink); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .start-tag, :root:not([data-theme="light"]) .logo { color: var(--ink); } }
+.start-tag::after { content: ""; position: absolute; left: 50%; bottom: -8px; width: 12px; height: 12px; margin-left: -6px; background: var(--surface); border-right: 2px solid var(--line); border-bottom: 2px solid var(--line); transform: rotate(45deg); }
+@keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+
+.foot { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; color: var(--muted); font-size: .85rem; }
+.foot button { background: none; border: none; color: var(--muted); text-decoration: underline; cursor: pointer; font-weight: 700; padding: 4px; }
+.foot p { width: 100%; text-align: center; margin: 0; font-weight: 600; }
+
+/* ---------- Lesson ---------- */
+.lesson { min-height: 100%; display: grid; grid-template-rows: auto 1fr auto; }
+.lesson-top { display: flex; align-items: center; gap: 14px; padding-block: 18px 8px; }
+.lesson-top .bar { flex: 1; }
+.lesson-top .bar > i { background: var(--good); }
+.close { background: none; border: none; cursor: pointer; color: var(--muted); padding: 4px; display: grid; }
+.close svg { width: 26px; height: 26px; }
+.hearts { display: flex; align-items: center; gap: 4px; color: var(--heart); font-weight: 900; font-variant-numeric: tabular-nums; }
+.hearts svg { width: 26px; height: 26px; }
+.hearts.hit svg { animation: shake .4s; }
+
+.q { padding-block: 18px 30px; display: grid; gap: 22px; align-content: start; }
+.q-kind { font-family: var(--f-display); font-weight: 600; font-size: 1.55rem; margin: 0; text-wrap: balance; }
+.q-tag { font-size: .78rem; text-transform: uppercase; letter-spacing: .12em; color: var(--brand-hi); font-weight: 900; }
+.prompt-row { display: grid; grid-template-columns: 88px minmax(0, 1fr); gap: 12px; align-items: center; }
+.prompt-row .byte { width: 88px; }
+.prompt-row .bubble { font-size: 1.08rem; }
+.big-value { font-family: var(--f-mono); font-size: 1.7rem; letter-spacing: .08em; color: var(--brand-hi); display: block; margin-top: 6px; }
+
+.options { display: grid; gap: 10px; }
+.opt {
+  text-align: left; background: var(--surface); border: 2px solid var(--line); border-bottom-width: 5px; border-radius: 16px;
+  padding: 14px 16px; cursor: pointer; display: flex; gap: 12px; align-items: center; font-weight: 700; font-size: 1.02rem;
+}
+.opt:hover { background: var(--brand-soft); }
+.opt .key { flex: none; width: 28px; height: 28px; border: 2px solid var(--line); border-radius: 8px; display: grid; place-items: center; font-size: .8rem; color: var(--muted); }
+.opt.sel { border-color: var(--brand-hi); background: var(--brand-soft); color: var(--ink); }
+.opt.sel .key { border-color: var(--brand-hi); color: var(--brand-hi); }
+
+.sentence { background: var(--surface); border: 2px solid var(--line); border-radius: 16px; padding: 18px; font-size: 1.15rem; line-height: 2.4; }
+.slot {
+  display: inline-flex; align-items: center; justify-content: center; min-width: 110px; height: 44px; vertical-align: middle;
+  border-bottom: 3px solid var(--line-strong); margin: 0 4px; padding: 0 4px;
+}
+.slot .tile { margin: 0; }
+.bank { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+.tile {
+  background: var(--surface); border: 2px solid var(--line); border-bottom-width: 4px; border-radius: 12px; padding: 7px 14px;
+  cursor: pointer; font-weight: 800; font-size: 1rem; line-height: 1.3;
+}
+.tile:hover { background: var(--brand-soft); }
+.tile.used { visibility: hidden; }
+.tile-ghost { background: var(--line); border-color: var(--line); color: transparent; cursor: default; }
+
+.bits { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 6px; max-width: 520px; width: 100%; margin: 0 auto; }
+.bit-col { display: grid; gap: 6px; justify-items: stretch; text-align: center; }
+.bit-col small { font-family: var(--f-mono); color: var(--muted); font-size: .72rem; }
+.bit {
+  aspect-ratio: 3 / 4; max-width: 100%; border-radius: 12px; border: 2px solid var(--line); border-bottom-width: 5px; background: var(--surface);
+  font-family: var(--f-mono); font-weight: 700; font-size: clamp(1.2rem, 5vw, 1.8rem); cursor: pointer; color: var(--muted);
+}
+.bit.on { background: var(--brand); border-color: var(--brand-shadow); color: #fff; }
+.bit.cursor { outline: 3px solid var(--gold); outline-offset: 2px; }
+.bits-hint { text-align: center; color: var(--muted); font-size: .85rem; font-weight: 600; margin: 0; }
+
+.num-row { display: flex; align-items: center; gap: 10px; background: var(--surface); border: 2px solid var(--line); border-radius: 16px; padding: 6px 16px; }
+.num-row:focus-within { border-color: var(--brand-hi); }
+.num-row input { flex: 1; min-width: 0; border: none; background: transparent; color: var(--ink); font-family: var(--f-mono); font-size: 1.5rem; padding: 10px 0; outline: none; }
+.num-row .unit-lbl { color: var(--muted); font-weight: 800; }
+
+.lesson-foot { border-top: 2px solid var(--line); padding-block: 18px calc(18px + env(safe-area-inset-bottom, 0px)); background: var(--bg); }
+.lesson-foot .col { display: flex; justify-content: space-between; gap: 12px; align-items: center; }
+.lesson-foot .btn { min-width: 150px; }
+
+.sheet { border-top: none; }
+.sheet.good { background: var(--good-soft); }
+.sheet.bad { background: var(--bad-soft); }
+.sheet .col { display: grid; gap: 14px; }
+.sheet-head { display: flex; align-items: center; gap: 12px; }
+.sheet-head .badge { width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; background: var(--surface); flex: none; }
+.sheet-head .badge svg { width: 30px; height: 30px; }
+.sheet.good .sheet-head { color: var(--good); }
+.sheet.bad .sheet-head { color: var(--bad); }
+.sheet-head h3 { font-family: var(--f-display); font-weight: 600; font-size: 1.45rem; margin: 0; }
+.sheet-head p { margin: 0; font-weight: 800; }
+.sheet .answer { font-weight: 800; color: var(--ink); }
+.sheet .answer code { font-family: var(--f-mono); }
+.sheet .expl { margin: 0; color: var(--ink); font-weight: 600; white-space: pre-line; max-width: 62ch; }
+.sheet-enter { animation: slideUp .22s ease-out; }
+@keyframes slideUp { from { transform: translateY(40px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+/* ---------- Results ---------- */
+.result { min-height: 100%; display: grid; place-items: center; padding-block: 30px; }
+.result .col { display: grid; gap: 22px; justify-items: center; text-align: center; }
+.result .byte { width: 160px; }
+.result h2 { font-family: var(--f-display); font-weight: 600; font-size: 2rem; margin: 0; color: var(--gold); text-wrap: balance; }
+.result h2.bad { color: var(--bad); }
+.result p { margin: 0; color: var(--muted); font-weight: 700; max-width: 44ch; }
+.tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; width: 100%; max-width: 440px; }
+.tile-stat { border: 2px solid var(--gold); border-radius: 16px; overflow: hidden; background: var(--surface); }
+.tile-stat .t { background: var(--gold); color: #fff; font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; font-weight: 900; padding: 4px; }
+.tile-stat .v { font-family: var(--f-display); font-weight: 600; font-size: 1.45rem; padding: 10px 4px; font-variant-numeric: tabular-nums; }
+.tile-stat.g { border-color: var(--good); } .tile-stat.g .t { background: var(--good); }
+.tile-stat.b { border-color: var(--brand-hi); } .tile-stat.b .t { background: var(--brand-hi); }
+.result .actions { display: grid; gap: 12px; width: 100%; max-width: 440px; }
+
+.confirm-back { position: fixed; inset: 0; background: rgba(5, 20, 26, .55); display: grid; place-items: end center; z-index: 20; padding: 16px; }
+.confirm { background: var(--surface); border-radius: 20px; padding: 22px; max-width: 420px; width: 100%; display: grid; gap: 14px; text-align: center; margin-bottom: env(safe-area-inset-bottom, 0px); }
+.confirm .byte { width: 90px; margin: 0 auto; }
+.confirm h3 { font-family: var(--f-display); font-weight: 600; margin: 0; font-size: 1.3rem; }
+.confirm p { margin: 0; color: var(--muted); font-weight: 600; }
+
+@media (max-width: 480px) {
+  .prompt-row { grid-template-columns: 64px minmax(0, 1fr); }
+  .prompt-row .byte { width: 64px; }
+  .hello { grid-template-columns: 72px minmax(0, 1fr); }
+  .hello .byte { width: 72px; }
+  .lesson-foot .btn { min-width: 0; flex: 1; }
+  .q-kind { font-size: 1.3rem; }
+  .stats { gap: 10px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+/* =====================================================================
+   Content: IB Computer Science, Topic 1 — Data Representation (Kognity)
+   Question types:
+     mcq    – pick one option (answer = correct option text)
+     blank  – fill the ___ gaps from a word bank
+     bits   – set 8 bits
+     number – type a number (accepted within [min, max])
+   ===================================================================== */
+const UNITS = [
+  {
+    id: "u1", title: "Number systems", tag: "Topic 1 · Unit 1",
+    lessons: [
+      {
+        id: "u1l1", title: "Registers & two's complement",
+        qs: [
+          { type: "blank", text: "A ___ is a high-speed area of memory located within the CPU.",
+            answers: ["register"], bank: ["register", "cache", "hard drive", "RAM"],
+            expl: "A register is a small, ultra-high-speed area of memory within the CPU, used to temporarily store data during the fetch–decode–execute cycle." },
+          { type: "blank", text: "The ___ number system is the human readable number system, which consists of 10 digits.",
+            answers: ["denary"], bank: ["denary", "binary", "hexadecimal", "octal"],
+            expl: "Denary (base 10) uses the digits 0–9, the system people use every day. Binary is base 2 and hexadecimal is base 16." },
+          { type: "bits", prompt: "Convert this negative denary integer into 8-bit two's complement.", value: "−11", answer: "11110101",
+            expl: "Start with positive denary 11, which is binary 00001011.\nThen complement it (flip every bit), giving 11110100.\nThen add 1, giving 11110101." },
+          { type: "bits", prompt: "Convert this positive denary integer into an 8-bit two's complement value.", value: "76", answer: "01001100",
+            expl: "Representing a positive number in two's complement is straightforward: 76 = 64 + 8 + 4. Just remember to use all eight bits, regardless of the number being represented." },
+          { type: "bits", prompt: "What is the new binary number after a 2-bit logical right shift on this pattern?", value: "00110001", answer: "00001100",
+            expl: "In a logical right shift, bits shifted off the right-hand end of the pattern are lost, and zeros are added at the left-hand end of the pattern." },
+          { type: "bits", prompt: "What is the new binary number after a 1-bit logical left shift on this pattern?", value: "00110001", answer: "01100010",
+            expl: "In a logical left shift, bits shifted off the left-hand end of the pattern are lost, and zeros are added at the right-hand end of the pattern." }
+        ]
+      },
+      {
+        id: "u1l2", title: "Overflow & hexadecimal",
+        qs: [
+          { type: "mcq", prompt: "What would happen if the system tried to store a denary value greater than 255 in an 8-bit register?",
+            answer: "Overflow error", options: ["Overflow error", "Underflow error", "The register grows to 9 bits", "The value is stored as a decimal"],
+            expl: "Overflow errors occur when a computer system attempts to fill its registers with a value that is one bit larger than its capacity, which might cause the system to crash." },
+          { type: "bits", prompt: "What is the result of adding these two binary numbers?", value: "10101010 + 00110011", answer: "11011101",
+            expl: "Add column by column from the right, carrying 1 whenever 1 + 1 = 10.\nCheck in denary: 170 + 51 = 221, and 221 = 11011101." },
+          { type: "blank", text: "An overflow error will most likely cause the computer system to ___.",
+            answers: ["crash"], bank: ["crash", "cool down", "compress", "speed up"],
+            expl: "Overflow errors occur when a computer system attempts to fill its registers with a value that is one bit larger than its capacity, which might cause the system to crash." },
+          { type: "mcq", prompt: "One example of hexadecimal usage is…",
+            answer: "Displaying error messages", options: ["Displaying error messages", "Machine code programming", "High-level language programming", "Designing presentation files"],
+            expl: "Error codes are often shown in hexadecimal (as are memory addresses and colour codes) because hex is much easier for people to read than long strings of binary." },
+          { type: "mcq", prompt: "Which of the following is a benefit of using hexadecimal instead of binary?",
+            answer: "Shorter representation on the screen", options: ["Shorter representation on the screen", "Uses less memory space", "Faster program execution", "Faster data transmission"],
+            expl: "Each hex digit stands for 4 bits, so hex is a shorter way for people to write binary. The computer still stores everything as binary, so it doesn't save memory or make anything faster." }
+        ]
+      }
+    ]
+  },
+  {
+    id: "u2", title: "Text, sound and images", tag: "Topic 1 · Unit 2",
+    lessons: [
+      {
+        id: "u2l1", title: "Characters & text",
+        qs: [
+          { type: "blank", text: "Emojis can be represented using the ___ character set.",
+            answers: ["Unicode"], bank: ["Unicode", "ASCII", "RGB", "binary"],
+            expl: "The ASCII character set is used to represent English characters, but Unicode can represent every character in every language, including emojis." },
+          { type: "blank", text: "The number of characters that can be represented using ASCII is ___.",
+            answers: ["128"], bank: ["128", "256", "64", "1024"],
+            expl: "Standard ASCII uses 7 bits per character, and 2⁷ = 128 different characters." },
+          { type: "number", prompt: "The computer stores ‘A’ in binary as 01000001. What is the denary number of ‘B’?", answer: 66, min: 66, max: 66,
+            expl: "The binary value of character A is 01000001, which is 65 in denary, so B is 66 in denary." },
+          { type: "number", prompt: "How many bits are needed to store the phrase ‘I love computer’?", answer: 120, min: 120, max: 120, unit: "bits",
+            expl: "Each character needs 8 bits, and there are 15 characters in the phrase (including the spaces).\n8 × 15 = 120 bits" },
+          { type: "mcq", prompt: "What does ASCII stand for?",
+            answer: "American Standard Code for Information Interchange",
+            options: ["American Standard Code for Information Interchange", "American Standard Computer for Internet Interchange", "Advanced System Code for Information Input", "Automatic Standard Character for Information Interchange"],
+            expl: "ASCII is the American Standard Code for Information Interchange: a character set that gives each English character its own binary code." },
+          { type: "blank", text: "The ASCII character set was replaced by ___ to fully encompass the languages and alphabets of the world.",
+            answers: ["Unicode"], bank: ["Unicode", "hexadecimal", "RLE", "binary"],
+            expl: "ASCII only covers English characters. Unicode can represent every character in every language, including emojis." }
+        ]
+      },
+      {
+        id: "u2l2", title: "Images",
+        qs: [
+          { type: "blank", text: "All image file types, such as .jpg and .gif, use different ___ methods to store image data as binary.",
+            answers: ["encoding"], bank: ["encoding", "sampling", "shifting", "pixel"],
+            expl: "Computer systems represent images using several file types, commonly .jpg, .png and .gif. They all use different encoding methods, but they are all ways of storing image data as binary." },
+          { type: "number", prompt: "How many bits are needed to represent 512 colours in an image?", answer: 9, min: 9, max: 9, unit: "bits",
+            expl: "Each extra bit doubles the number of colours. 2⁹ = 512, so 9 bits per pixel give exactly 512 colours." },
+          { type: "mcq", prompt: "In images, what is the number of bits per pixel called?",
+            answer: "Colour depth", options: ["Colour depth", "Resolution", "Sample rate", "Bit rate"],
+            expl: "Colour depth is how many bits are used to store the colour of each pixel. The higher the colour depth and the resolution, the more data has to be stored." },
+          { type: "mcq", prompt: "What is being described if a picture is said to be 1080 × 720?",
+            answer: "Resolution", options: ["Resolution", "Colour depth", "Sample resolution", "Compression ratio"],
+            expl: "Image resolution is the number of pixels in an image, normally described as its width × height." },
+          { type: "blank", text: "The higher the colour depth and the resolution, the more data has to be stored. So increasing either of these values will ___ the file size.",
+            answers: ["increase"], bank: ["increase", "decrease", "not change", "halve"],
+            expl: "More bits per pixel, or more pixels, means more bits to store, so the file gets bigger." },
+          { type: "blank", text: "Pixel colours can be written in hexadecimal. The black colour value is ___, while the white colour value is ___.",
+            answers: ["000000", "FFFFFF"], bank: ["000000", "FFFFFF", "FF0000", "0000FF"],
+            expl: "A hex colour is three pairs: red, green and blue. 00 means none of that colour and FF (255) means all of it, so 000000 is black and FFFFFF is white." }
+        ]
+      },
+      {
+        id: "u2l3", title: "Sound",
+        qs: [
+          { type: "blank", text: "In the physical world, sounds are ___ waves that are constantly changing.",
+            answers: ["analogue"], bank: ["analogue", "digital", "discrete", "binary"],
+            expl: "Data from the physical world is continuously variable and changes in a smooth curve: it is analogue." },
+          { type: "mcq", prompt: "Digital sounds used by computers are made up of which of the following?",
+            answer: "Discrete signals", options: ["Discrete signals", "Continuous analogue waves", "Pixels", "Hexadecimal colour codes"],
+            expl: "Digital sounds are a sequence of ‘discrete’ signals designed to give the illusion of a constantly changing sound, but they are really a complex series of ‘on’ and ‘off’ instructions." },
+          { type: "mcq", prompt: "The number of bits used to record each measurement during the sampling process is called…",
+            answer: "Sample resolution", options: ["Sample resolution", "Sample rate", "Colour depth", "Frequency"],
+            expl: "Sample resolution is the number of bits per sample. Sample rate is how many samples are taken each second." },
+          { type: "mcq", prompt: "The more bits that are used to measure the analogue wave, the…",
+            answer: "More accurate the sound, and the bigger the file size", options: ["More accurate the sound, and the bigger the file size", "More accurate the sound, and the smaller the file size", "Less accurate the sound, and the smaller the file size", "Louder the sound, with the same file size"],
+            expl: "More bits per sample capture the wave more precisely, but every extra bit has to be stored, so the file grows." },
+          { type: "blank", text: "The higher the sample rate and the sample resolution, the more ___ the sound will be, but the file used to save it will be much ___.",
+            answers: ["accurate", "larger"], bank: ["accurate", "larger", "smaller", "quieter"],
+            expl: "Taking more samples, and using more bits for each one, records the wave more accurately but produces a much larger file." },
+          { type: "mcq", prompt: "Which of the following file types is an example of a sound file?",
+            answer: ".mp3", options: [".mp3", ".jpg", ".png", ".gif"],
+            expl: ".mp3 is a (lossy compressed) sound format. .jpg, .png and .gif are all image formats." }
+        ]
+      }
+    ]
+  },
+  {
+    id: "u3", title: "Data storage and compression", tag: "Topic 1 · Unit 3",
+    lessons: [
+      {
+        id: "u3l1", title: "Lossy vs lossless",
+        qs: [
+          { type: "blank", text: "Most compressed file types fall into one of two categories: ___, which loses some data from the file, and ___, which retains all the data but stores it differently.",
+            answers: ["lossy", "lossless"], bank: ["lossy", "lossless", "raw", "encoded"],
+            expl: "Lossy compression permanently removes some data. Lossless compression keeps all of it and just stores it more efficiently." },
+          { type: "blank", text: "In ___ compression, data will not be lost from the original file. After the file has been uncompressed, the result is exactly the same as the original file.",
+            answers: ["lossless"], bank: ["lossless", "lossy", "raw", "analogue"],
+            expl: "Lossless compression does not lose any data. It uses an algorithm to store the data in a different way, so decompressing gives back the exact original." },
+          { type: "blank", text: "Two drawbacks of using lossless compression rather than lossy compression are the ___ file size and ___ transmission speed.",
+            answers: ["larger", "slower"], bank: ["larger", "slower", "smaller", "faster"],
+            expl: "Lossless files keep all of the original data, so they stay larger than lossy files and take longer to send." },
+          { type: "mcq", prompt: "Which of the following does NOT describe how lossy compression reduces the size of a sound file?",
+            answer: "Data will not be removed", options: ["Data will not be removed", "Sounds outside the range of human hearing are removed", "Quieter sounds played at the same time as louder ones are removed", "The sample rate or sample resolution is reduced"],
+            expl: "Lossy compression does permanently remove some data from the original source file." },
+          { type: "mcq", prompt: "Which of the following does NOT describe how lossless compression reduces the size of a sound file?",
+            answer: "Discards any unnecessary sounds", options: ["Discards any unnecessary sounds", "Stores repeated patterns of data only once", "Uses an algorithm to store the data differently", "Rebuilds exactly the original file when uncompressed"],
+            expl: "Lossless compression does not lose any data from the original file. It uses an algorithm to store its data in a different way, and after uncompressing, the result is exactly the same as the original." },
+          { type: "mcq", prompt: "What would be the effect of compressing a movie file using a lossy compression technique?",
+            answer: "Decreased file size and quality", options: ["Decreased file size and quality", "Decreased file size, same quality", "Increased file size and quality", "Same file size, lower quality"],
+            expl: "Lossy compression permanently removes some data, which means smaller files and lower storage requirements. The trade-off is lower quality." }
+        ]
+      },
+      {
+        id: "u3l2", title: "Why compress?",
+        qs: [
+          { type: "mcq", prompt: "Name the lossless technique that encodes ‘runs’ of the same data as a value and a number of repetitions.",
+            answer: "Run Length Encoding (RLE)", options: ["Run Length Encoding (RLE)", "Huffman coding", "Lossy compression", "Sampling"],
+            expl: "A lossless algorithm can find groups of repeating data and record the data only once, along with how many times it repeats. This is run-length encoding (RLE)." },
+          { type: "blank", text: "Files that have had no compression applied are called ___ files.",
+            answers: ["raw"], bank: ["raw", "lossy", "encoded", "binary"],
+            expl: "A raw file is the original data before any compression has been applied." },
+          { type: "blank", text: "Compression is normally used for three different file types: sound files, ___ files and video files.",
+            answers: ["image"], bank: ["image", "text", "program", "system"],
+            expl: "Sound, image and video files are large, so they benefit the most from compression." },
+          { type: "blank", text: "A compression ___ is a simple set of instructions that is applied to a file in order to reduce its size.",
+            answers: ["algorithm"], bank: ["algorithm", "register", "pixel", "sample"],
+            expl: "An algorithm is a set of steps. Run-length encoding is one example of a compression algorithm." },
+          { type: "mcq", prompt: "Which of the following is an aim of file compression?",
+            answer: "Save storage space", options: ["Save storage space", "Increase file quality", "Make files easier to edit", "Add extra data for backups"],
+            expl: "Compression reduces the logical size of a file to something much smaller than the original, to save storage space and improve processing time." },
+          { type: "mcq", prompt: "Which of the following is NOT a benefit of file compression?",
+            answer: "Reducing the file quality", options: ["Reducing the file quality", "Saving storage space", "Faster data transmission", "Using less bandwidth"],
+            expl: "Compression saves storage space, speeds up transmission and uses less bandwidth. It can sometimes reduce quality, but that is a side effect, not an aim." }
+        ]
+      },
+      {
+        id: "u3l3", title: "File size calculations",
+        qs: [
+          { type: "mcq", prompt: "Which of the following will most likely have the largest file size?",
+            answer: "1 hour of a movie file", options: ["1 hour of a movie file", "1 hour of a music file", "10 pages of a text file", "10 pages of programming code"],
+            expl: "A movie stores both many images per second and sound, so an hour of video is far bigger than an hour of audio or pages of text." },
+          { type: "number", prompt: "A USB flash drive has 16 GiB of free space. Approximately how many 128 KiB photographs could it hold?", answer: 131072, min: 131072, max: 131072, unit: "photos",
+            expl: "16 GiB = 16 × 1024 × 1024 KiB = 16,777,216 KiB.\n16,777,216 ÷ 128 = 131,072 photos." },
+          { type: "number", prompt: "Calculate the file size of a 3 minute sound file with a 44.1 kHz sample rate and 8-bit sample resolution, in kibibytes.", answer: 7752, min: 7751, max: 7752.5, unit: "KiB",
+            expl: "3 minutes × 60 = 180 seconds.\n180 × 44,100 samples × 8 bits = 63,504,000 bits.\n÷ 8 = 7,938,000 bytes. ÷ 1024 = 7,751.95 ≈ 7,752 KiB." },
+          { type: "number", prompt: "Calculate the file size of a 50 second sound file with a 44.1 kHz sample rate and 8-bit sample resolution, in kibibytes.", answer: 2153, min: 2153, max: 2154, unit: "KiB",
+            expl: "50 × 44,100 samples × 8 bits = 17,640,000 bits.\n÷ 8 = 2,205,000 bytes. ÷ 1024 = 2,153.3 ≈ 2,153 KiB." },
+          { type: "number", prompt: "Calculate the file size of an image with a 2048 × 720 resolution and 256 colour values, in mebibytes (to 2 decimal places).", answer: 1.41, min: 1.40, max: 1.415, unit: "MiB",
+            expl: "256 colours = 8-bit colour depth (2⁸ = 256).\n2048 × 720 × 8 = 11,796,480 bits. ÷ 8 = 1,474,560 bytes.\n÷ 1024 = 1,440 KiB. ÷ 1024 ≈ 1.41 MiB." }
+        ]
+      }
+    ]
+  }
+];
+
+/* ======================= Byte, the mascot ======================= */
+function byteSVG(mood = "idle", extraClass = "") {
+  let eyes, mouth, brows = "";
+  if (mood === "happy") {
+    eyes = `<path class="b-stroke" d="M37 52 q7 -10 14 0"/><path class="b-stroke" d="M69 52 q7 -10 14 0"/>`;
+    mouth = `<path class="b-ink" d="M46 62 h28 q0 14 -14 14 q-14 0 -14 -14z"/>`;
+  } else if (mood === "sad") {
+    eyes = `<rect class="b-ink" x="39" y="46" width="10" height="11" rx="5"/><rect class="b-ink" x="71" y="46" width="10" height="11" rx="5"/>`;
+    brows = `<path class="b-stroke" d="M36 42 l13 -4" style="stroke-width:4"/><path class="b-stroke" d="M84 42 l-13 -4" style="stroke-width:4"/>`;
+    mouth = `<path class="b-stroke" d="M50 72 q10 -8 20 0"/>`;
+  } else if (mood === "think") {
+    eyes = `<rect class="b-ink" x="40" y="42" width="10" height="14" rx="5"/><rect class="b-ink" x="70" y="42" width="10" height="14" rx="5"/>`;
+    mouth = `<path class="b-stroke" d="M52 68 h16"/>`;
+  } else {
+    eyes = `<rect class="b-ink" x="39" y="41" width="11" height="16" rx="5.5"/><rect class="b-ink" x="70" y="41" width="11" height="16" rx="5.5"/>
+            <circle cx="47" cy="45" r="2" fill="#fff"/><circle cx="78" cy="45" r="2" fill="#fff"/>`;
+    mouth = `<path class="b-stroke" d="M50 65 q10 9 20 0"/>`;
+  }
+  return `<svg class="byte ${mood} ${extraClass}" viewBox="0 0 120 124" role="img" aria-label="Byte the computer mascot">
+    <g class="b-bob">
+      <line x1="60" y1="20" x2="60" y2="8" stroke="var(--brand-shadow)" stroke-width="4" stroke-linecap="round"/>
+      <circle class="b-bulb" cx="60" cy="7" r="6"/>
+      <rect class="b-body" x="10" y="18" width="100" height="80" rx="22"/>
+      <rect class="b-screen" x="21" y="28" width="78" height="58" rx="13"/>
+      <g class="b-eyes">${eyes}</g>
+      ${brows}
+      <ellipse class="b-cheek" cx="32" cy="66" rx="6" ry="3.5"/><ellipse class="b-cheek" cx="88" cy="66" rx="6" ry="3.5"/>
+      ${mouth}
+      <circle class="b-led" cx="98" cy="92" r="2.6"/>
+      <text x="22" y="95" font-family="JetBrains Mono, monospace" font-size="7" font-weight="700" fill="var(--screen)" opacity=".75">01</text>
+      <rect class="b-dark" x="50" y="98" width="20" height="10" rx="2"/>
+      <rect class="b-body" x="30" y="106" width="60" height="12" rx="6"/>
+    </g>
+  </svg>`;
+}
+
+/* ======================= Icons ======================= */
+const ICON = {
+  flame: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c1 3.5 5 5.6 5 10.5A5 5 0 0 1 7 12.5c0-2 1-3.6 2.3-4.6.1 1.5.8 2.6 1.9 3C10.4 7.6 11.2 4.6 12 2z"/><path d="M12 22a6 6 0 0 1-6-6c0-.6.1-1.2.3-1.8A6 6 0 0 0 18 14.2c.2.6.3 1.2.3 1.8a6 6 0 0 1-6.3 6z" opacity=".55"/></svg>`,
+  gem: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 3h10l4 6-9 12L3 9z"/><path d="M3 9h18M9 3l3 6 3-6M12 9v12" stroke="rgba(255,255,255,.55)" stroke-width="1.4" fill="none"/></svg>`,
+  heart: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 3 4.5 6.8 4.5c2.2 0 3.6 1.2 5.2 3 1.6-1.8 3-3 5.2-3 3.8 0 5.9 3.9 4.4 7.3C19.5 16.4 12 21 12 21z"/></svg>`,
+  star: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.5l2.9 6 6.6.8-4.9 4.5 1.3 6.5L12 17l-5.9 3.3 1.3-6.5L2.5 9.3l6.6-.8z"/></svg>`,
+  check: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5l5 5 10-11"/></svg>`,
+  lock: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 10V8a5 5 0 0 1 10 0v2h1a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1zm2 0h6V8a3 3 0 0 0-6 0z"/></svg>`,
+  x: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>`,
+  sound: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>`,
+  mute: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M17 9l5 6M22 9l-5 6"/></svg>`,
+  goodBadge: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5l5 5 10-11"/></svg>`,
+  badBadge: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>`
+};
+
+/* ======================= Persistence ======================= */
+const STORE = "byte-cs:v1";
+const DAILY_GOAL = 30;
+const defaultState = () => ({ xp: 0, done: {}, streak: { count: 0, last: null }, daily: { date: null, xp: 0 }, sound: true, unlockAll: false });
+let S = defaultState();
+try { const raw = JSON.parse(localStorage.getItem(STORE) || "null"); if (raw) S = Object.assign(defaultState(), raw); } catch (e) {}
+const save = () => { try { localStorage.setItem(STORE, JSON.stringify(S)); } catch (e) {} };
+
+const dayKey = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+const yesterdayKey = () => { const d = new Date(); d.setDate(d.getDate() - 1); return dayKey(d); };
+const liveStreak = () => (S.streak.last === dayKey() || S.streak.last === yesterdayKey()) ? S.streak.count : 0;
+const todayXP = () => (S.daily.date === dayKey() ? S.daily.xp : 0);
+
+/* ======================= Sound effects ======================= */
+let audioCtx = null;
+function tone(freqs, type = "sine", dur = 0.12, gap = 0.09, vol = 0.12) {
+  if (!S.sound) return;
+  try {
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    freqs.forEach((f, i) => {
+      const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+      const t = audioCtx.currentTime + i * gap;
+      o.type = type; o.frequency.value = f;
+      g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      o.connect(g).connect(audioCtx.destination); o.start(t); o.stop(t + dur + 0.02);
+    });
+  } catch (e) {}
+}
+const sfx = {
+  good: () => tone([660, 880], "triangle", 0.16, 0.1),
+  bad: () => tone([220, 165], "square", 0.18, 0.12, 0.06),
+  done: () => tone([523, 659, 784, 1047], "triangle", 0.2, 0.12)
+};
+
+/* ======================= Helpers ======================= */
+const app = document.getElementById("app");
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const shuffle = (a) => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const pick = (a) => a[Math.floor(Math.random() * a.length)];
+const allLessons = UNITS.flatMap((u) => u.lessons);
+const lessonIndex = (id) => allLessons.findIndex((l) => l.id === id);
+const isUnlocked = (id) => S.unlockAll || lessonIndex(id) === 0 || !!S.done[allLessons[lessonIndex(id) - 1].id];
+const currentLessonId = () => (allLessons.find((l) => !S.done[l.id]) || {}).id;
+
+const CHEER = ["Bit by bit, you're getting there!", "That's a 1, not a 0. Nice!", "Byte-sized brilliance!", "Your registers are glowing!", "No overflow here. Great job!", "Correct! Saved to long-term memory."];
+const OOPS = ["Not quite. Let's flip that bit.", "Close! Even good CPUs need a second cycle.", "Oops, that one overflowed.", "No worries, mistakes are how we debug."];
+const KIND = {
+  mcq: ["Choose the correct answer", "Multiple choice"],
+  blank: ["Fill in the blank", "Word bank"],
+  bits: ["Set the 8 bits", "Binary"],
+  number: ["Type your answer", "Calculation"]
+};
+
+/* ======================= Home screen ======================= */
+function renderHome() {
+  const streak = liveStreak();
+  const curId = currentLessonId();
+  const doneCount = Object.keys(S.done).filter((k) => lessonIndex(k) >= 0).length;
+  const offsets = [0, 52, 78, 52, 0, -52, -78, -52];
+  let n = 0;
+
+  const greet = doneCount === 0
+    ? ["Hi, I'm Byte!", "Let's learn how computers store numbers, text, images and sound. Tap the first lesson to start."]
+    : doneCount === allLessons.length
+      ? ["You finished Topic 1!", "Every lesson is complete. Replay any of them to keep your streak alive."]
+      : ["Welcome back!", `You've finished ${doneCount} of ${allLessons.length} lessons. Ready for the next one?`];
+
+  app.innerHTML = `
+    <header class="topbar"><div class="col">
+      <div class="logo">${byteSVG("idle")}<span>byte</span></div>
+      <div class="stats">
+        <span class="stat flame ${streak ? "" : "off"}" title="Day streak">${ICON.flame}${streak}</span>
+        <span class="stat gem" title="Total XP">${ICON.gem}${S.xp}</span>
+        <button class="icon-btn" id="soundBtn" aria-label="${S.sound ? "Mute sounds" : "Turn sounds on"}">${S.sound ? ICON.sound : ICON.mute}</button>
+      </div>
+    </div></header>
+
+    <main class="col home">
+      <section class="hello">
+        ${byteSVG(doneCount === allLessons.length ? "happy" : "idle")}
+        <div class="bubble"><h1>${greet[0]}</h1><p>${greet[1]}</p></div>
+      </section>
+
+      <section class="goal" aria-label="Daily goal">
+        <div class="goal-top"><b>Daily goal</b><span>${Math.min(todayXP(), DAILY_GOAL)} / ${DAILY_GOAL} XP</span></div>
+        <div class="bar"><i style="width:${Math.min(100, (todayXP() / DAILY_GOAL) * 100)}%"></i></div>
+      </section>
+
+      ${UNITS.map((u) => {
+        const ud = u.lessons.filter((l) => S.done[l.id]).length;
+        return `<section class="unit">
+          <div class="unit-banner">
+            <div><div class="k">${esc(u.tag)}</div><h2>${esc(u.title)}</h2></div>
+            <span class="count">${ud}/${u.lessons.length}</span>
+          </div>
+          <div class="path">
+            ${u.lessons.map((l) => {
+              const off = offsets[n++ % offsets.length];
+              const done = !!S.done[l.id], open = isUnlocked(l.id), cur = l.id === curId && open;
+              const cls = done ? "done" : open ? "" : "locked";
+              const icon = done ? ICON.check : open ? ICON.star : ICON.lock;
+              return `<div class="node-wrap" style="transform:translateX(${off}px)">
+                ${cur ? `<span class="start-tag">${done ? "REPLAY" : "START"}</span>` : ""}
+                <button class="node ${cls} ${cur ? "current" : ""}" data-lesson="${l.id}" ${open ? "" : "aria-disabled=\"true\""}
+                  aria-label="${esc(l.title)}${done ? ", completed" : open ? "" : ", locked"}">${icon}</button>
+                <div class="node-label">${esc(l.title)}${done && S.done[l.id].acc != null ? ` · ${S.done[l.id].acc}%` : ""}</div>
+              </div>`;
+            }).join("")}
+          </div>
+        </section>`;
+      }).join("")}
+
+      <footer class="foot">
+        <button id="unlockBtn">${S.unlockAll ? "Lock lessons in order" : "Unlock all lessons"}</button>
+        <button id="resetBtn">Reset progress</button>
+        <p>Questions from Kognity, IB Computer Science, Topic 1: Data Representation.</p>
+      </footer>
+    </main>`;
+
+  app.querySelectorAll(".node").forEach((b) => b.addEventListener("click", () => {
+    const id = b.dataset.lesson;
+    if (!isUnlocked(id)) { b.animate([{ transform: "translateX(-4px)" }, { transform: "translateX(4px)" }, { transform: "none" }], { duration: 250 }); return; }
+    startLesson(allLessons[lessonIndex(id)]);
+  }));
+  document.getElementById("soundBtn").addEventListener("click", () => { S.sound = !S.sound; save(); renderHome(); });
+  document.getElementById("unlockBtn").addEventListener("click", () => { S.unlockAll = !S.unlockAll; save(); renderHome(); });
+  document.getElementById("resetBtn").addEventListener("click", () => askConfirm(
+    "Reset all progress?", "Your XP, streak and completed lessons will be erased from this browser.", "Reset", "sad",
+    () => { const snd = S.sound; S = defaultState(); S.sound = snd; save(); renderHome(); }
+  ));
+}
+
+function askConfirm(title, text, okLabel, mood, onOk) {
+  const back = document.createElement("div");
+  back.className = "confirm-back";
+  back.innerHTML = `<div class="confirm" role="dialog" aria-modal="true" aria-labelledby="cfT">
+    ${byteSVG(mood)}<h3 id="cfT">${esc(title)}</h3><p>${esc(text)}</p>
+    <button class="btn bad wide" id="cfOk">${esc(okLabel)}</button>
+    <button class="btn ghost wide" id="cfNo">Cancel</button></div>`;
+  document.body.appendChild(back);
+  const close = () => { back.remove(); document.removeEventListener("keydown", onKey, true); };
+  const onKey = (e) => { if (e.key === "Escape") { e.stopPropagation(); close(); } };
+  document.addEventListener("keydown", onKey, true);
+  back.addEventListener("click", (e) => { if (e.target === back) close(); });
+  back.querySelector("#cfNo").addEventListener("click", close);
+  back.querySelector("#cfOk").addEventListener("click", () => { close(); onOk(); });
+  back.querySelector("#cfNo").focus();
+}
+
+/* ======================= Lesson engine ======================= */
+let L = null;
+
+function startLesson(lesson) {
+  L = {
+    lesson, queue: lesson.qs.map((_, i) => i), total: lesson.qs.length, done: 0, hearts: 5,
+    missed: new Set(), start: Date.now(), cur: null, phase: "answer", input: null
+  };
+  nextQuestion();
+}
+
+function nextQuestion() {
+  if (L.queue.length === 0) return finishLesson();
+  L.cur = L.queue.shift();
+  L.phase = "answer";
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = L.lesson.qs[L.cur];
+  const [kind, tag] = KIND[q.type];
+  app.innerHTML = `
+    <div class="lesson">
+      <div class="col lesson-top">
+        <button class="close" id="quit" aria-label="Quit lesson">${ICON.x}</button>
+        <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="${L.total}" aria-valuenow="${L.done}"><i style="width:${(L.done / L.total) * 100}%"></i></div>
+        <span class="hearts" id="hearts" aria-label="${L.hearts} hearts left">${ICON.heart}${L.hearts}</span>
+      </div>
+      <main class="col q" id="q">
+        <div><div class="q-tag">${tag}${L.missed.has(L.cur) ? " · Second try" : ""}</div><h2 class="q-kind">${kind}</h2></div>
+        <div id="qBody"></div>
+      </main>
+      <div class="lesson-foot" id="foot">
+        <div class="col">
+          <button class="btn ghost" id="skip">Skip</button>
+          <button class="btn good" id="check" disabled>Check</button>
+        </div>
+      </div>
+    </div>`;
+
+  document.getElementById("quit").addEventListener("click", quitLesson);
+  document.getElementById("skip").addEventListener("click", () => grade(true));
+  document.getElementById("check").addEventListener("click", () => grade(false));
+
+  const body = document.getElementById("qBody");
+  ({ mcq: buildMCQ, blank: buildBlank, bits: buildBits, number: buildNumber })[q.type](q, body);
+}
+
+const setReady = (ok) => { const c = document.getElementById("check"); if (c) c.disabled = !ok; };
+
+function promptRow(q, extra = "") {
+  return `<div class="prompt-row">${byteSVG("think")}<div class="bubble">${esc(q.prompt)}${extra}</div></div>`;
+}
+
+function buildMCQ(q, body) {
+  const opts = shuffle(q.options);
+  body.innerHTML = `${promptRow(q)}<div class="options" role="radiogroup" style="margin-top:22px">
+    ${opts.map((o, i) => `<button class="opt" role="radio" aria-checked="false" data-v="${esc(o)}"><span class="key">${i + 1}</span><span>${esc(o)}</span></button>`).join("")}
+  </div>`;
+  L.input = null;
+  body.querySelectorAll(".opt").forEach((b) => b.addEventListener("click", () => {
+    if (L.phase !== "answer") return;
+    body.querySelectorAll(".opt").forEach((x) => { x.classList.remove("sel"); x.setAttribute("aria-checked", "false"); });
+    b.classList.add("sel"); b.setAttribute("aria-checked", "true");
+    L.input = b.dataset.v; setReady(true);
+  }));
+}
+
+function buildBlank(q, body) {
+  const parts = q.text.split("___");
+  const bank = shuffle(q.bank.map((w, i) => ({ w, id: i })));
+  L.input = new Array(q.answers.length).fill(null);   // holds tile ids
+  const draw = () => {
+    let html = `<div class="prompt-row">${byteSVG("think")}<div class="bubble">Complete the sentence using the words below.</div></div>
+      <div class="sentence" style="margin-top:22px">`;
+    parts.forEach((p, i) => {
+      html += esc(p);
+      if (i < parts.length - 1) {
+        const t = L.input[i];
+        html += `<span class="slot" data-slot="${i}">${t != null ? `<button class="tile" data-back="${i}">${esc(bank.find((b) => b.id === t).w)}</button>` : ""}</span>`;
+      }
+    });
+    html += `</div><div class="bank" style="margin-top:22px">${bank.map((b) =>
+      `<button class="tile ${L.input.includes(b.id) ? "used" : ""}" data-tile="${b.id}" ${L.input.includes(b.id) ? 'tabindex="-1" aria-hidden="true"' : ""}>${esc(b.w)}</button>`).join("")}</div>`;
+    body.innerHTML = html;
+    body.querySelectorAll("[data-tile]").forEach((b) => b.addEventListener("click", () => {
+      if (L.phase !== "answer") return;
+      const slot = L.input.indexOf(null);
+      if (slot === -1) return;
+      L.input[slot] = +b.dataset.tile; draw();
+    }));
+    body.querySelectorAll("[data-back]").forEach((b) => b.addEventListener("click", () => {
+      if (L.phase !== "answer") return;
+      L.input[+b.dataset.back] = null; draw();
+    }));
+    setReady(!L.input.includes(null));
+  };
+  L.bankWords = (ids) => ids.map((id) => bank.find((b) => b.id === id).w);
+  draw();
+}
+
+function buildBits(q, body) {
+  L.input = { bits: [0, 0, 0, 0, 0, 0, 0, 0], cursor: 0, touched: false };
+  const values = [128, 64, 32, 16, 8, 4, 2, 1];
+  body.innerHTML = `${promptRow(q, `<span class="big-value">${esc(q.value)}</span>`)}
+    <div style="margin-top:24px; display:grid; gap:10px">
+      <div class="bits">${values.map((v, i) => `<div class="bit-col"><small>${v}</small><button class="bit" data-i="${i}" aria-label="Bit worth ${v}">0</button></div>`).join("")}</div>
+      <p class="bits-hint">Tap a bit to flip it, or type 0 and 1 on your keyboard.</p>
+    </div>`;
+  const paint = () => body.querySelectorAll(".bit").forEach((b, i) => {
+    const on = L.input.bits[i] === 1;
+    b.textContent = on ? "1" : "0"; b.classList.toggle("on", on);
+    b.classList.toggle("cursor", L.input.touched && i === L.input.cursor && L.input.typing);
+    b.setAttribute("aria-pressed", on ? "true" : "false");
+  });
+  body.querySelectorAll(".bit").forEach((b) => b.addEventListener("click", () => {
+    if (L.phase !== "answer") return;
+    const i = +b.dataset.i; L.input.bits[i] ^= 1; L.input.touched = true; L.input.typing = false; L.input.cursor = (i + 1) % 8;
+    paint(); setReady(true);
+  }));
+  L.bitsKey = (k) => {
+    if (k === "0" || k === "1") {
+      L.input.bits[L.input.cursor] = +k; L.input.touched = true; L.input.typing = true;
+      L.input.cursor = Math.min(7, L.input.cursor + (L.input.cursor === 7 ? 0 : 1));
+      paint(); setReady(true); return true;
+    }
+    if (k === "Backspace") { L.input.cursor = Math.max(0, L.input.cursor - 1); L.input.bits[L.input.cursor] = 0; L.input.typing = true; paint(); return true; }
+    return false;
+  };
+  paint();
+}
+
+function buildNumber(q, body) {
+  body.innerHTML = `${promptRow(q)}
+    <label class="num-row" style="margin-top:22px">
+      <input id="numIn" inputmode="decimal" autocomplete="off" placeholder="Your answer" aria-label="Your answer">
+      ${q.unit ? `<span class="unit-lbl">${esc(q.unit)}</span>` : ""}
+    </label>`;
+  const inp = body.querySelector("#numIn");
+  inp.addEventListener("input", () => { L.input = inp.value; setReady(inp.value.trim() !== ""); });
+  setTimeout(() => inp.focus(), 30);
+}
+
+const parseNum = (s) => {
+  const cleaned = String(s).replace(/,/g, "").replace(/[a-zA-Z\s]/g, "");
+  return cleaned === "" ? NaN : Number(cleaned);
+};
+
+function grade(skipped) {
+  if (L.phase !== "answer") return;
+  const q = L.lesson.qs[L.cur];
+  let ok = false, shown = "";
+  if (!skipped) {
+    if (q.type === "mcq") ok = L.input === q.answer;
+    else if (q.type === "blank") ok = L.bankWords(L.input).every((w, i) => w.toLowerCase() === q.answers[i].toLowerCase());
+    else if (q.type === "bits") ok = L.input.bits.join("") === q.answer;
+    else if (q.type === "number") { const v = parseNum(L.input); ok = !isNaN(v) && v >= q.min - 1e-9 && v <= q.max + 1e-9; }
+  }
+  if (q.type === "mcq") shown = esc(q.answer);
+  else if (q.type === "blank") shown = q.answers.map(esc).join(" · ");
+  else if (q.type === "bits") shown = `<code>${q.answer}</code>`;
+  else shown = `<code>${q.answer.toLocaleString("en-US")}</code>${q.unit ? " " + esc(q.unit) : ""}`;
+
+  L.phase = "feedback";
+  L.lastOk = ok;
+  document.querySelectorAll(".opt, .tile, .bit, #numIn").forEach((el) => { el.disabled = true; });
+
+  // Byte reacts
+  const byteEl = document.querySelector(".prompt-row .byte");
+  if (byteEl) byteEl.outerHTML = byteSVG(ok ? "happy" : "sad");
+
+  if (ok) sfx.good(); else sfx.bad();
+  if (!ok) {
+    L.hearts = Math.max(0, L.hearts - 1);
+    L.missed.add(L.cur);
+    const h = document.getElementById("hearts");
+    h.innerHTML = ICON.heart + L.hearts; h.classList.add("hit"); h.setAttribute("aria-label", `${L.hearts} hearts left`);
+  }
+
+  const foot = document.getElementById("foot");
+  foot.className = `lesson-foot sheet sheet-enter ${ok ? "good" : "bad"}`;
+  foot.innerHTML = `<div class="col" role="status">
+    <div class="sheet-head">
+      <span class="badge">${ok ? ICON.goodBadge : ICON.badBadge}</span>
+      <div><h3>${ok ? pick(["Correct!", "Nice!", "Excellent!", "Awesome!"]) : skipped ? "Skipped" : "Not quite"}</h3>
+      <p>${ok ? esc(pick(CHEER)) : esc(pick(OOPS))}</p></div>
+    </div>
+    ${ok ? "" : `<div class="answer">Correct answer: ${shown}</div>`}
+    <p class="expl">${esc(q.expl)}</p>
+    <button class="btn ${ok ? "good" : "bad"} wide" id="cont">Continue</button>
+  </div>`;
+  const cont = document.getElementById("cont");
+  cont.addEventListener("click", advance);
+  cont.focus({ preventScroll: true });
+  foot.scrollIntoView({ block: "end", behavior: "smooth" });
+}
+
+function advance() {
+  if (L.phase !== "feedback") return;
+  if (L.lastOk) L.done++;
+  else L.queue.push(L.cur);   // missed questions come back at the end
+  if (L.hearts === 0) return failLesson();
+  nextQuestion();
+}
+
+function quitLesson() {
+  askConfirm("Leave this lesson?", "Byte will miss you. Your progress in this lesson won't be saved.", "Quit lesson", "sad", () => { L = null; renderHome(); });
+}
+
+function finishLesson() {
+  const firstTry = L.total - L.missed.size;
+  const acc = Math.round((firstTry / L.total) * 100);
+  const xp = firstTry * 2 + 10 + (L.missed.size === 0 ? 5 : 0);
+  const secs = Math.round((Date.now() - L.start) / 1000);
+  const time = `${Math.floor(secs / 60)}:${String(secs % 60).padStart(2, "0")}`;
+
+  const prev = S.done[L.lesson.id];
+  S.done[L.lesson.id] = { acc: Math.max(acc, prev ? prev.acc || 0 : 0) };
+  S.xp += xp;
+  const today = dayKey();
+  if (S.daily.date !== today) S.daily = { date: today, xp: 0 };
+  S.daily.xp += xp;
+  if (S.streak.last !== today) {
+    S.streak.count = S.streak.last === yesterdayKey() ? S.streak.count + 1 : 1;
+    S.streak.last = today;
+  }
+  save();
+  sfx.done();
+
+  const nextL = allLessons[lessonIndex(L.lesson.id) + 1];
+  app.innerHTML = `<main class="result"><div class="col">
+    ${byteSVG("happy")}
+    <h2>Lesson complete!</h2>
+    <p>${acc === 100 ? "A perfect run. Not a single bit out of place!" : acc >= 70 ? "Great work. Byte is proud of you!" : "You made it through! Replay it later to lock it in."}</p>
+    <div class="tiles">
+      <div class="tile-stat"><div class="t">Total XP</div><div class="v">+${xp}</div></div>
+      <div class="tile-stat g"><div class="t">Accuracy</div><div class="v">${acc}%</div></div>
+      <div class="tile-stat b"><div class="t">Time</div><div class="v">${time}</div></div>
+    </div>
+    <div class="actions">
+      ${nextL ? `<button class="btn wide" id="nextBtn">Next lesson</button>` : ""}
+      <button class="btn ${nextL ? "ghost" : ""} wide" id="homeBtn">Back to path</button>
+    </div>
+  </div></main>`;
+  const done = L; L = null;
+  document.getElementById("homeBtn").addEventListener("click", renderHome);
+  if (nextL) document.getElementById("nextBtn").addEventListener("click", () => startLesson(nextL));
+  (document.getElementById("nextBtn") || document.getElementById("homeBtn")).focus();
+}
+
+function failLesson() {
+  const lesson = L.lesson; L = null;
+  app.innerHTML = `<main class="result"><div class="col">
+    ${byteSVG("sad")}
+    <h2 class="bad">Out of hearts</h2>
+    <p>Every computer scientist debugs. Read the explanations again and give it another go.</p>
+    <div class="actions">
+      <button class="btn wide" id="retry">Try again</button>
+      <button class="btn ghost wide" id="homeBtn">Back to path</button>
+    </div>
+  </div></main>`;
+  document.getElementById("retry").addEventListener("click", () => startLesson(lesson));
+  document.getElementById("homeBtn").addEventListener("click", renderHome);
+  document.getElementById("retry").focus();
+}
+
+/* ======================= Keyboard ======================= */
+document.addEventListener("keydown", (e) => {
+  if (!L || document.querySelector(".confirm-back")) return;
+  const q = L.lesson.qs[L.cur];
+  if (e.key === "Enter") {
+    if (L.phase === "answer") { const c = document.getElementById("check"); if (c && !c.disabled) { e.preventDefault(); grade(false); } }
+    else { e.preventDefault(); advance(); }
+    return;
+  }
+  if (L.phase !== "answer") return;
+  if (q.type === "mcq" && /^[1-4]$/.test(e.key)) {
+    const b = document.querySelectorAll(".opt")[+e.key - 1]; if (b) b.click();
+  } else if (q.type === "bits" && L.bitsKey && L.bitsKey(e.key)) {
+    e.preventDefault();
+  }
+});
+
+renderHome();
+
+/* Exposed for testing */
+window.__byte = { UNITS, parseNum };
+</script>
+</body>
+</html>
