@@ -87,6 +87,7 @@ button { font: inherit; color: inherit; }
 .btn:disabled { background: var(--locked); color: var(--muted); box-shadow: 0 4px 0 var(--locked-shadow); cursor: not-allowed; transform: none; }
 .btn.good { background: var(--good); box-shadow: 0 4px 0 var(--good-shadow); }
 .btn.bad { background: var(--bad); box-shadow: 0 4px 0 var(--bad-shadow); }
+.btn.good:disabled, .btn.bad:disabled { background: var(--locked); color: var(--muted); box-shadow: 0 4px 0 var(--locked-shadow); }
 .btn.ghost { background: transparent; color: var(--muted); box-shadow: none; border: 2px solid var(--line); }
 .btn.ghost:hover { background: var(--surface); }
 .btn.wide { width: 100%; }
@@ -189,7 +190,7 @@ button { font: inherit; color: inherit; }
 .foot p { width: 100%; text-align: center; margin: 0; font-weight: 600; }
 
 /* ---------- Lesson ---------- */
-.lesson { min-height: 100%; display: grid; grid-template-rows: auto 1fr auto; }
+.lesson { min-height: 100%; display: grid; grid-template-rows: auto 1fr auto; grid-template-columns: minmax(0, 1fr); }
 .lesson-top { display: flex; align-items: center; gap: 14px; padding-block: 18px 8px; }
 .lesson-top .bar { flex: 1; }
 .lesson-top .bar > i { background: var(--good); }
@@ -199,7 +200,7 @@ button { font: inherit; color: inherit; }
 .hearts svg { width: 26px; height: 26px; }
 .hearts.hit svg { animation: shake .4s; }
 
-.q { padding-block: 18px 30px; display: grid; gap: 22px; align-content: start; }
+.q { padding-block: 18px 30px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 22px; align-content: start; }
 .q-kind { font-family: var(--f-display); font-weight: 600; font-size: 1.55rem; margin: 0; text-wrap: balance; }
 .q-tag { font-size: .78rem; text-transform: uppercase; letter-spacing: .12em; color: var(--brand-hi); font-weight: 900; }
 .prompt-row { display: grid; grid-template-columns: 88px minmax(0, 1fr); gap: 12px; align-items: center; }
@@ -245,7 +246,7 @@ button { font: inherit; color: inherit; }
 
 .num-row { display: flex; align-items: center; gap: 10px; background: var(--surface); border: 2px solid var(--line); border-radius: 16px; padding: 6px 16px; }
 .num-row:focus-within { border-color: var(--brand-hi); }
-.num-row input { flex: 1; min-width: 0; border: none; background: transparent; color: var(--ink); font-family: var(--f-mono); font-size: 1.5rem; padding: 10px 0; outline: none; }
+.num-row input { flex: 1; width: 0; min-width: 0; border: none; background: transparent; color: var(--ink); font-family: var(--f-mono); font-size: 1.5rem; padding: 10px 0; outline: none; }
 .num-row .unit-lbl { color: var(--muted); font-weight: 800; }
 
 .lesson-foot { border-top: 2px solid var(--line); padding-block: 18px calc(18px + env(safe-area-inset-bottom, 0px)); background: var(--bg); }
