@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Byte · Data Representation</title>
-<meta name="description" content="Learn IB Computer Science Topic 1 (Data Representation) with Byte, one bite-sized lesson at a time.">
+<title>Byte · IB Computer Science</title>
+<meta name="description" content="Learn IB Computer Science Topic 1 (Data Representation) and Topic 2 (Data Transmission) with Byte, one bite-sized lesson at a time.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Crect x='10' y='14' width='100' height='84' rx='22' fill='%230f5468'/%3E%3Crect x='22' y='26' width='76' height='58' rx='12' fill='%23b9f0e6'/%3E%3Crect x='40' y='42' width='11' height='16' rx='5' fill='%230b2f3b'/%3E%3Crect x='69' y='42' width='11' height='16' rx='5' fill='%230b2f3b'/%3E%3Cpath d='M48 68 q12 10 24 0' stroke='%230b2f3b' stroke-width='5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -310,7 +310,9 @@ button { font: inherit; color: inherit; }
 
 <script>
 /* =====================================================================
-   Content: IB Computer Science, Topic 1 — Data Representation (Kognity)
+   Content: IB Computer Science (Kognity)
+     Topic 1 — Data Representation (units u1–u3)
+     Topic 2 — Data Transmission (unit u4)
    Question types:
      mcq    – pick one option (answer = correct option text)
      blank  – fill the ___ gaps from a word bank
@@ -499,6 +501,87 @@ const UNITS = [
         ]
       }
     ]
+  },
+  {
+    id: "u4", title: "Data transmission", tag: "Topic 2 · Unit 1",
+    lessons: [
+      {
+        id: "u4l1", title: "Encryption",
+        qs: [
+          { type: "mcq", prompt: "Which of the following is true about encryption?",
+            answer: "It prevents unauthorised people from understanding the message.",
+            options: ["It prevents unauthorised people from understanding the message.", "It stops the message from being intercepted.", "It makes the file smaller so it sends faster.", "It detects errors that happen during transmission."],
+            expl: "Encryption is the process of converting plaintext into ciphertext so that it cannot be understood by unauthorised people. The message can still be intercepted, it just can't be read." },
+          { type: "mcq", prompt: "A company wants to send a new employee his contract to sign via the internet. Which encryption method should it use to make sure the contract is highly secured?",
+            answer: "Asymmetric", options: ["Asymmetric", "Symmetric"],
+            expl: "Asymmetric encryption is more secure than symmetric encryption because it uses two different keys to encrypt and decrypt data." },
+          { type: "mcq", prompt: "Moustafa wants to send his part of a school project to Lilian, encrypted using a simple and fast method. Which method should he use?",
+            answer: "Symmetric", options: ["Symmetric", "Asymmetric"],
+            expl: "Symmetric encryption is easier and faster than asymmetric encryption. It uses only one secret key to encrypt and decrypt data." },
+          { type: "mcq", prompt: "Which of the following is NOT one of the asymmetric encryption steps?",
+            answer: "Both the sender and the receiver exchange the same key.",
+            options: ["Both the sender and the receiver exchange the same key.", "The receiver generates two keys, a public one and a private one.", "The sender uses the receiver’s public key to encrypt the data.", "The receiver uses its private key to decrypt the data."],
+            expl: "Asymmetric encryption steps:\n1. The receiver generates two keys (public and private).\n2. The receiver’s public key is sent to the sender.\n3. The sender uses the receiver’s public key to encrypt the data.\n4. The sender sends the encrypted data to the receiver.\n5. The receiver uses its private key to decrypt the data." },
+          { type: "mcq", prompt: "Which of the following is NOT one of the symmetric encryption steps?",
+            answer: "The sender replaces each letter with another one from the alphabet.",
+            options: ["The sender replaces each letter with another one from the alphabet.", "Both the sender and the receiver exchange the same secret key.", "The sender encrypts the message with the secret key.", "The receiver uses the secret key to decrypt the message."],
+            expl: "Symmetric encryption steps:\n1. Both the sender and the receiver exchange the same secret key.\n2. The sender encrypts the message with the secret key.\n3. The sender sends the data to the receiver.\n4. The receiver uses the secret key to decrypt the message." },
+          { type: "blank", text: "The simple encryption algorithm that replaces each individual character in the text with another one from the alphabet is called the ___.",
+            answers: ["Caesar cipher"], bank: ["Caesar cipher", "checksum", "parity check", "public key"],
+            expl: "A Caesar cipher shifts every letter a fixed number of places along the alphabet. With a shift of 3, A becomes D and B becomes E." },
+          { type: "mcq", prompt: "Which of the following items is NOT needed to perform the encryption process?",
+            answer: "Ciphertext", options: ["Ciphertext", "Plaintext", "An algorithm", "Encryption key"],
+            expl: "To encrypt data you need the plaintext, an algorithm and an encryption key. Ciphertext is what encryption produces, not something it needs." }
+        ]
+      },
+      {
+        id: "u4l2", title: "Transmission & error detection",
+        qs: [
+          { type: "mcq", prompt: "Which of the following best describes the half-duplex data transmission method?",
+            answer: "Data is transmitted in both directions, but one direction at a time.",
+            options: ["Data is transmitted in both directions, but one direction at a time.", "Data is transmitted in one direction only.", "Data is transmitted in both directions at the same time.", "Data is sent one bit at a time over a single wire."],
+            expl: "With half-duplex, data packets travel in both directions between devices, but only one direction at a time. Simplex is one direction only, and full-duplex is both directions at the same time." },
+          { type: "mcq", prompt: "What is USB short for?",
+            answer: "Universal Serial Bus", options: ["Universal Serial Bus", "Universal System Bus", "Unified Serial Bandwidth", "Universal Synchronous Bus"],
+            expl: "USB stands for Universal Serial Bus. It sends data serially, one bit after another." },
+          { type: "mcq", prompt: "What is the main purpose of an error detection method?",
+            answer: "Maintain the accuracy of the data", options: ["Maintain the accuracy of the data", "Encrypt the data", "Compress the data", "Speed up the transmission"],
+            expl: "Error detection methods help detect any error that might occur during the transmission of data." },
+          { type: "mcq", prompt: "Which error detection method does this describe? ‘If the two sets of data (the one sent and the one received) are different, there’s no way of knowing whether the error occurred when originally sent, or when it was sent back to the sender.’",
+            answer: "Echo check", options: ["Echo check", "Parity check", "Checksum", "Automatic Repeat Query (ARQ)"],
+            expl: "In an echo check, the receiver sends the data back to the sender to compare. The data might have been received correctly but got corrupted on the way back." },
+          { type: "mcq", prompt: "Which of the following methods is NOT used to detect errors in data transmission?",
+            answer: "Check digit", options: ["Check digit", "Checksum", "Parity check", "Automatic Repeat Query (ARQ)"],
+            expl: "A check digit is used to check that data is valid when it is entered, not to detect errors during transmission." },
+          { type: "blank", text: "The error detection method that uses a system of acknowledgements and timeouts is called ___.",
+            answers: ["Automatic Repeat Query (ARQ)"], bank: ["Automatic Repeat Query (ARQ)", "echo check", "checksum", "parity check"],
+            expl: "ARQ waits for an acknowledgement from the receiver. If none arrives within a set time (a timeout), the data is sent again." },
+          { type: "mcq", prompt: "Which of the following Automatic Repeat Query (ARQ) steps is incorrect?",
+            answer: "The receiving computer recalculates the checksum value.",
+            options: ["The receiving computer recalculates the checksum value.", "A request is sent with data requiring acknowledgement.", "If no acknowledgement arrives within a certain time frame, the data package is resent.", "If the data received contains an error, a request to resend it is sent automatically."],
+            expl: "Automatic Repeat Query (ARQ):\n• Uses acknowledgement and timeout\n• Request is sent with data requiring acknowledgement\n• If no acknowledgement arrives within a certain time frame, the data package is resent\n• If the data received contains an error, a request is sent automatically to resend the data\n• The resend request repeats until the packet is received error-free, a limit is reached, or an acknowledgement is received" }
+        ]
+      },
+      {
+        id: "u4l3", title: "Parity & check digits",
+        qs: [
+          { type: "mcq", prompt: "Using odd parity, what would be the parity bit for the binary number 1000101?",
+            answer: "0", options: ["0", "1"],
+            expl: "1000101 already has an odd number of 1s (three). So the parity bit is 0, which keeps the total number of 1s odd." },
+          { type: "mcq", prompt: "An odd parity check has been used. Which of these bytes has been transmitted incorrectly?",
+            answer: "01001011", options: ["01001011", "11000001", "01000000", "01001100"],
+            expl: "With odd parity, every byte should contain an odd number of 1s. 01001011 contains four 1s, an even number, so it must have been corrupted." },
+          { type: "mcq", prompt: "An even parity check has been used. Which of these bytes has been transmitted incorrectly?",
+            answer: "01001001", options: ["01001001", "11001001", "01001000", "01001110"],
+            expl: "With even parity, every byte should contain an even number of 1s. 01001001 contains three 1s, an odd number, so it must have been corrupted." },
+          { type: "number", prompt: "To validate a check digit, each digit in the code number is multiplied by its position, counting from the right (the rightmost digit is position 1), and the results are added. What is the total for 235148?", answer: 66, min: 66, max: 66,
+            expl: "2×6 + 3×5 + 5×4 + 1×3 + 4×2 + 8×1\n= 12 + 15 + 20 + 3 + 8 + 8 = 66" },
+          { type: "mcq", prompt: "The total for 235148 is 66. The total is divided by 11, and if the remainder is 0 the code number is valid. Is 235148 valid?",
+            answer: "Valid: the remainder is 0", options: ["Valid: the remainder is 0", "Not valid: the remainder is 6"],
+            expl: "66 ÷ 11 = 6 with remainder 0, so the code number and its check digit (8) are valid." }
+        ]
+      }
+    ]
   }
 ];
 
@@ -615,9 +698,9 @@ function renderHome() {
   let n = 0;
 
   const greet = doneCount === 0
-    ? ["Hi, I'm Byte!", "Let's learn how computers store numbers, text, images and sound. Tap the first lesson to start."]
+    ? ["Hi, I'm Byte!", "Let's learn how computers store and send data: numbers, text, images, sound, encryption and error checks. Tap the first lesson to start."]
     : doneCount === allLessons.length
-      ? ["You finished Topic 1!", "Every lesson is complete. Replay any of them to keep your streak alive."]
+      ? ["You finished every lesson!", "Topics 1 and 2 are complete. Replay any lesson to keep your streak alive."]
       : ["Welcome back!", `You've finished ${doneCount} of ${allLessons.length} lessons. Ready for the next one?`];
 
   app.innerHTML = `
@@ -668,7 +751,7 @@ function renderHome() {
       <footer class="foot">
         <button id="unlockBtn">${S.unlockAll ? "Lock lessons in order" : "Unlock all lessons"}</button>
         <button id="resetBtn">Reset progress</button>
-        <p>Questions from Kognity, IB Computer Science, Topic 1: Data Representation.</p>
+        <p>Questions from Kognity, IB Computer Science, Topic 1: Data Representation and Topic 2: Data Transmission.</p>
       </footer>
     </main>`;
 
