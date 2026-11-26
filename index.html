@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Byte · IB Computer Science</title>
-<meta name="description" content="Learn IB Computer Science Topic 1 (Data Representation) and Topic 2 (Data Transmission) with Byte, one bite-sized lesson at a time.">
+<meta name="description" content="Learn IB Computer Science Topic 1 (Data Representation), Topic 2 (Data Transmission) and Topic 3 (Hardware) with Byte, one bite-sized lesson at a time.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Crect x='10' y='14' width='100' height='84' rx='22' fill='%230f5468'/%3E%3Crect x='22' y='26' width='76' height='58' rx='12' fill='%23b9f0e6'/%3E%3Crect x='40' y='42' width='11' height='16' rx='5' fill='%230b2f3b'/%3E%3Crect x='69' y='42' width='11' height='16' rx='5' fill='%230b2f3b'/%3E%3Cpath d='M48 68 q12 10 24 0' stroke='%230b2f3b' stroke-width='5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -216,6 +216,7 @@ button { font: inherit; color: inherit; }
 .opt:hover { background: var(--brand-soft); }
 .opt .key { flex: none; width: 28px; height: 28px; border: 2px solid var(--line); border-radius: 8px; display: grid; place-items: center; font-size: .8rem; color: var(--muted); }
 .opt.sel { border-color: var(--brand-hi); background: var(--brand-soft); color: var(--ink); }
+.opt > span:last-child, .sheet .answer, .tile { min-width: 0; overflow-wrap: anywhere; }   /* long unbroken values (IPv6, MAC) wrap instead of overflowing */
 .opt.sel .key { border-color: var(--brand-hi); color: var(--brand-hi); }
 
 .sentence { background: var(--surface); border: 2px solid var(--line); border-radius: 16px; padding: 18px; font-size: 1.15rem; line-height: 2.4; }
@@ -313,6 +314,7 @@ button { font: inherit; color: inherit; }
    Content: IB Computer Science (Kognity)
      Topic 1 — Data Representation (units u1–u3)
      Topic 2 — Data Transmission (unit u4)
+     Topic 3 — Hardware (unit u5)
    Question types:
      mcq    – pick one option (answer = correct option text)
      blank  – fill the ___ gaps from a word bank
@@ -582,6 +584,94 @@ const UNITS = [
         ]
       }
     ]
+  },
+  {
+    id: "u5", title: "Hardware", tag: "Topic 3 · Unit 1",
+    lessons: [
+      {
+        id: "u5l1", title: "Network hardware & addresses",
+        qs: [
+          { type: "blank", text: "The network hardware device used to connect a Local Area Network (LAN) to the internet is a ___.",
+            answers: ["router"], bank: ["router", "switch", "hub", "server"],
+            expl: "A router connects a LAN to the internet and forwards data packets between the two networks." },
+          { type: "mcq", prompt: "Which of the following is NOT a role of a router?",
+            answer: "They can assign MAC addresses to devices.",
+            options: ["They can assign MAC addresses to devices.", "They connect a LAN to the internet.", "They forward data packets between networks.", "They can assign IP addresses to devices on the network."],
+            expl: "MAC addresses are assigned to devices by the manufacturer. All the other options are genuine roles of routers." },
+          { type: "mcq", prompt: "Which of the following is a valid IPv4 address?",
+            answer: "200.67.53.43", options: ["200.67.53.43", "200.67.53.432", "200.53.43"],
+            expl: "An IPv4 address is split into four 8-bit numbers, so each of those has a maximum value of 255. 432 is too big, and 200.53.43 only has three numbers." },
+          { type: "number", prompt: "How many bits does an IPv4 address consist of?", answer: 32, min: 32, max: 32, unit: "bits",
+            expl: "An IPv4 address is four 8-bit numbers: 4 × 8 = 32 bits." },
+          { type: "mcq", prompt: "Which of the following is a valid IPv6 address?",
+            answer: "0123:4567:89ab:cdef:0123:4567:89ab:cdef",
+            options: ["0123:4567:89ab:cdef:0123:4567:89ab:cdef", "0123:4567:89ab:gdef:0123:4567:89ab:cdef", "0123:89ab:cdef:0123:4567:89ab:cdef"],
+            expl: "An IPv6 address is written as 32 hexadecimal characters (8 groups of 4), using the digits 0–9 and the letters A–F. ‘g’ is not a hex digit, and the last option only has 7 groups." },
+          { type: "number", prompt: "How many bits does an IPv6 address consist of?", answer: 128, min: 128, max: 128, unit: "bits",
+            expl: "An IPv6 address has 32 hex characters, and each hex character is 4 bits: 32 × 4 = 128 bits." },
+          { type: "mcq", prompt: "Which of the following is a valid MAC address?",
+            answer: "00:A0:C9:14:C8:29", options: ["00:A0:C9:14:C8:29", "00:G0:C9:14:C8:29", "00:A0:C9:14:C8", "200.67.53.43"],
+            expl: "MAC addresses are usually written as 12 hexadecimal digits (6 pairs). Hexadecimal uses the digits 0–9 and the letters A–F, so ‘G’ is not allowed. 200.67.53.43 is an IPv4 address." }
+        ]
+      },
+      {
+        id: "u5l2", title: "Storage",
+        qs: [
+          { type: "mcq", prompt: "A group of students need to edit the same presentation at the same time from home. Which storage is most suitable for their presentation?",
+            answer: "Cloud storage", options: ["Cloud storage", "Local storage"],
+            expl: "With cloud storage, users can log in and access their data from any computer with an internet connection, and can work on the same files at the same time." },
+          { type: "mcq", prompt: "Data can be stored in cloud storage or on local storage. Which one needs an internet connection to access the stored data?",
+            answer: "Cloud storage", options: ["Cloud storage", "Local storage"],
+            expl: "Cloud storage keeps your data on servers on the internet, so you need an internet connection to reach it. Local storage is inside or plugged into your own device." },
+          { type: "blank", text: "The type of computer located on the internet and used to store data in cloud storage systems is a ___.",
+            answers: ["server"], bank: ["server", "router", "client", "laptop"],
+            expl: "Cloud storage providers keep your files on servers, powerful computers connected to the internet." },
+          { type: "mcq", prompt: "Which type of secondary storage has no moving parts?",
+            answer: "Solid-state (flash)", options: ["Solid-state (flash)", "Magnetic", "Optical"],
+            expl: "Solid-state (flash) storage keeps data in electronic circuits on a chip, so there is no spinning disk like in an HDD or a DVD drive." },
+          { type: "mcq", prompt: "Solid-state (flash) memory uses logic gates to control the flow of electrons on a chip. Which logic gate is most used by modern solid-state storage?",
+            answer: "NAND", options: ["NAND", "NOR", "AND", "XOR"],
+            expl: "Older solid-state devices use NOR flash technology, while more modern devices use NAND flash technology." },
+          { type: "blank", text: "___ storage uses a laser to create and read ‘pits’ and ‘lands’.",
+            answers: ["Optical"], bank: ["Optical", "Magnetic", "Solid-state", "Cloud"],
+            expl: "CDs, DVDs and Blu-ray discs are optical storage: a laser burns pits into the disc surface and reads the pattern of pits and lands back as binary." },
+          { type: "mcq", prompt: "Which of the following is an example of magnetic storage?",
+            answer: "HDD", options: ["HDD", "SSD", "DVD", "USB flash drive"],
+            expl: "A HDD (hard disk drive) is magnetic storage. SSDs and USB flash drives are solid-state, and a DVD is optical." },
+          { type: "mcq", prompt: "Which of the following is NOT an example of secondary storage?",
+            answer: "ROM", options: ["ROM", "HDD", "DVD", "CD"],
+            expl: "ROM is an example of primary storage. The rest are secondary storage devices or media." }
+        ]
+      },
+      {
+        id: "u5l3", title: "Input devices & the CPU",
+        qs: [
+          { type: "mcq", prompt: "A sportswear manufacturer uses barcodes for its products. It wants a technology that stores more data than a traditional barcode and also lets customers automatically visit its website. Which should it use?",
+            answer: "QR codes", options: ["QR codes", "Magnetic stripes", "Optical mark recognition (OMR)", "Longer barcodes"],
+            expl: "A QR code stores much more data than a barcode, including a web address, so scanning it with a phone can open the manufacturer’s website directly." },
+          { type: "mcq", prompt: "Lilian needs to scan all sides of a physical toy character for her school project. Which input device should she use?",
+            answer: "3D scanner", options: ["3D scanner", "Flatbed scanner", "Barcode scanner", "Microphone"],
+            expl: "A 3D scanner captures the shape of an object from every side and turns it into a 3D digital model. A flatbed scanner only scans flat surfaces." },
+          { type: "mcq", prompt: "Which of the following is NOT an advantage of a barcode scanner?",
+            answer: "Suitable for inputting text from a book page.",
+            options: ["Suitable for inputting text from a book page.", "Quicker than typing the barcode number on a keyboard.", "More accurate than typing the barcode number manually."],
+            expl: "Scanning a barcode is quicker and more accurate than typing the barcode number with a keyboard. However, a barcode scanner cannot input individual pieces of text from a book or any other material." },
+          { type: "mcq", prompt: "Both the optical mouse and the touch screen are examples of…",
+            answer: "Pointing devices", options: ["Pointing devices", "Output devices", "Storage devices", "Sensors"],
+            expl: "Both the optical mouse and the touch screen are pointing devices because they are used to control a cursor or pointer on the screen." },
+          { type: "mcq", prompt: "Which of the following is the most suitable device for inputting letters and numbers into a computer?",
+            answer: "Keyboard", options: ["Keyboard", "Mouse", "Barcode scanner", "Webcam"],
+            expl: "A keyboard has a key for every letter and number, so it is the most direct way to type text and numbers." },
+          { type: "mcq", prompt: "Which of these options explains why having multiple cores increases CPU performance?",
+            answer: "Several instructions can be performed simultaneously.",
+            options: ["Several instructions can be performed simultaneously.", "Each instruction becomes shorter.", "The clock speed doubles automatically.", "The CPU needs less RAM."],
+            expl: "More cores let the CPU work on several instructions at the same time, which increases performance. Modern CPUs usually have between 2 and 16 cores." },
+          { type: "mcq", prompt: "How do we express that a CPU can perform 3 billion cycles per second?",
+            answer: "3 GHz", options: ["3 GHz", "3 MHz", "3 kHz", "3 THz"],
+            expl: "Clock speed is measured in hertz (cycles per second). 1 GHz is 1 billion cycles per second, so 3 billion cycles per second is 3 GHz." }
+        ]
+      }
+    ]
   }
 ];
 
@@ -698,9 +788,9 @@ function renderHome() {
   let n = 0;
 
   const greet = doneCount === 0
-    ? ["Hi, I'm Byte!", "Let's learn how computers store and send data: numbers, text, images, sound, encryption and error checks. Tap the first lesson to start."]
+    ? ["Hi, I'm Byte!", "Let's learn how computers store and send data: numbers, text, images, sound, encryption, error checks and hardware. Tap the first lesson to start."]
     : doneCount === allLessons.length
-      ? ["You finished every lesson!", "Topics 1 and 2 are complete. Replay any lesson to keep your streak alive."]
+      ? ["You finished every lesson!", "Topics 1, 2 and 3 are complete. Replay any lesson to keep your streak alive."]
       : ["Welcome back!", `You've finished ${doneCount} of ${allLessons.length} lessons. Ready for the next one?`];
 
   app.innerHTML = `
@@ -751,7 +841,7 @@ function renderHome() {
       <footer class="foot">
         <button id="unlockBtn">${S.unlockAll ? "Lock lessons in order" : "Unlock all lessons"}</button>
         <button id="resetBtn">Reset progress</button>
-        <p>Questions from Kognity, IB Computer Science, Topic 1: Data Representation and Topic 2: Data Transmission.</p>
+        <p>Questions from Kognity, IB Computer Science, Topic 1: Data Representation, Topic 2: Data Transmission and Topic 3: Hardware.</p>
       </footer>
     </main>`;
 
